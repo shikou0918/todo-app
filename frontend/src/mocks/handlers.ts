@@ -1,7 +1,7 @@
 import { http } from 'msw'
 import todoList from './todoList';
-const baseUrl = 'https://example.com'
+const baseUrl = 'http://localhost:5173'
 
 export const handlers = [
-    http.get(`${baseUrl}/connect/token`, todoList.get),
+    http.get(`${baseUrl}/todo_list`, todoList.get),
 ]
