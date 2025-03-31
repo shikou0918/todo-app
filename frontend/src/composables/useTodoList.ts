@@ -12,7 +12,7 @@ interface Todo {
   text: string;
 }
 
-const url = `/todo_list`;
+const url = `http://localhost:5173`;
 
 export const UseTodoList = (): UseTodoListReturns => {
   const fetchTodoList = async (): Promise<void> => {
