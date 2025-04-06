@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "mock": "cross-env NODE_ENV=development VITE_APP_MOCK_MODE=true yarn dev",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
     "format": "prettier . --write",
