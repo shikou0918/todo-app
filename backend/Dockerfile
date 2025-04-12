@@ -1,28 +1,20 @@
-# Step 1: Build base image for runtime
-FROM debian:bookworm-slim AS runtime
+# Golang1.22の公式イメージを使用
+FROM golang:1.24
 
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends tzdata ca-certificates && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Step 2: Build Go application
-FROM golang:1.23-bookworm AS builder
+# Airをインストール
+RUN go install github.com/air-verse/air@latest
 
 WORKDIR /app
 
-RUN mkdir -p /go/src
-WORKDIR /go/src
-COPY . /go/src
+# go.mod, go.sum をコピーして依存関係をダウンロード
+COPY go.mod go.sum ./
+RUN go mod download
 
-RUN go version
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -extldflags '-static'" -installsuffix cgo -trimpath -o /app ./cmd/main.go
+# 残りのソースコードと .air.toml をコピー
+COPY . .
 
-# Step 3: Create final runtime image
-FROM runtime
+# ポート公開
+EXPOSE 8080
 
-# ビルド済みバイナリをコピー
-COPY --from=builder /app/main /app
-
-# アプリケーション起動
-ENTRYPOINT ["/app"]
+# airを使ってホットリロードを実行
+CMD ["air", "-c", ".air.toml"]
